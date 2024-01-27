@@ -1,10 +1,11 @@
 import torch
 import numpy as np
+import sys
 
-from data import load_data
-
+# import Matrices and SpectralNet classes from the module spectralnet which is in the src folder which is in the same hirearchy as the examples folder
 from spectralnet import Metrics
 from spectralnet import SpectralNet
+from data import load_data
 
 
 def main():
