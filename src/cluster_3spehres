@@ -24,7 +24,7 @@ def main():
 
     spectralnet = SpectralNet(
         n_clusters=3,
-        should_use_ae=False,
+        should_use_ae=True,
         should_use_siamese=True,
         spectral_batch_size=100,
         spectral_epochs=40,
@@ -32,7 +32,8 @@ def main():
         spectral_n_nbg=8,
         spectral_scale_k=2,
         spectral_lr=1e-2,
-        siamese_epochs=10,
+        siamese_epochs=1,
+        ae_epochs=1,
         spectral_hiddens=[128, 128, 3],
     )
     spectralnet.fit(X, y)
