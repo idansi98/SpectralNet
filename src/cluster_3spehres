@@ -24,10 +24,10 @@ def main():
 
     spectralnet = SpectralNet(
         n_clusters=3,
-        should_use_ae=True,
+        should_use_ae=False,
         should_use_siamese=True,
-        spectral_batch_size=100,
-        spectral_epochs=40,
+        spectral_batch_size=500,
+        spectral_epochs=100,
         spectral_is_local_scale=False,
         spectral_n_nbg=8,
         spectral_scale_k=2,
@@ -47,13 +47,17 @@ def main():
         print(f"ACC: {np.round(acc_score, 3)}")
         print(f"NMI: {np.round(nmi_score, 3)}")
 
-    plt.scatter(embeddings[:, 0], embeddings[:, 1], c=cluster_assignments)
+    plt.scatter(embeddings[:, 0], embeddings[:, 1], c=y)
     plt.show()
 
-    # spectralnet.predict(x_test)
-    # embeddings2 = spectralnet.embeddings_
-    # plt.scatter(embeddings2[:, 0], embeddings2[:, 1], c=cluster_assignments)
-    # plt.show()
+    # no predicct for test data, and plot the embeddings, but now the number of clusters is 4
+    cluster_assignments = spectralnet.predict(x_test)
+    embeddings = spectralnet.embeddings_
+    #convert y_test to array for plt.scatter
+    y_test = y_test.detach().cpu().numpy()
+    plt.scatter(embeddings[:, 0], embeddings[:, 1], c=y_test)
+    plt.show()
+
     return embeddings, cluster_assignments
 
 
