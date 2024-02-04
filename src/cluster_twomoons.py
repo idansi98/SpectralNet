@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 
 from spectralnet import Metrics
 from spectralnet import SpectralNet
@@ -16,12 +17,17 @@ def main():
     else:
         y = None
 
+
+    # plot the original data
+    plt.scatter(X[:, 0], X[:, 1], c=y)
+    plt.show()    
+
     spectralnet = SpectralNet(
         n_clusters=2,
         should_use_ae=False,
         should_use_siamese=False,
         spectral_batch_size=712,
-        spectral_epochs=40,
+        spectral_epochs=10,
         spectral_is_local_scale=False,
         spectral_n_nbg=8,
         spectral_scale_k=2,
@@ -40,6 +46,8 @@ def main():
         print(f"ACC: {np.round(acc_score, 3)}")
         print(f"NMI: {np.round(nmi_score, 3)}")
 
+    plt.scatter(embeddings[:, 0], embeddings[:, 1], c=y)
+    plt.show()
     return embeddings, cluster_assignments
 
 

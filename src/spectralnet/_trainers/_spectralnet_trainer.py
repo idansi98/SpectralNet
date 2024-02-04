@@ -92,16 +92,16 @@ class SpectralTrainer:
         )
 
         train_loader, ortho_loader, valid_loader = self._get_data_loader()
-
         print("Training SpectralNet:")
         t = trange(self.epochs, leave=True)
         for epoch in t:
             train_loss = 0.0
-            for (X_grad, _), (X_orth, _) in zip(train_loader, ortho_loader):
+            for (X_grad, y_grad), (X_orth, _) in zip(train_loader, ortho_loader):
                 X_grad = X_grad.to(device=self.device)
                 X_grad = X_grad.view(X_grad.size(0), -1)
                 X_orth = X_orth.to(device=self.device)
                 X_orth = X_orth.view(X_orth.size(0), -1)
+
 
                 if self.is_sparse:
                     X_grad = make_batch_for_sparse_grapsh(X_grad)
@@ -119,8 +119,18 @@ class SpectralTrainer:
                 if self.siamese_net is not None:
                     with torch.no_grad():
                         X_grad = self.siamese_net.forward_once(X_grad)
-
-                W = self._get_affinity_matrix(X_grad)
+                
+                # W = self._get_affinity_matrix(X_grad)
+                ''' instead of using the provided affinity matrix, calculate it using the following rule:
+                    if the points are within the same cluster means their y value is the same, the affinity matrix should be 1, otherwise 0
+                '''
+                W = torch.zeros((X_grad.shape[0], X_grad.shape[0]))
+                for i in range(X_grad.shape[0]):
+                    for j in range(X_grad.shape[0]):
+                        if y_grad[i] == y_grad[j]:
+                            W[i][j] = 1
+                        else:
+                            W[i][j] = 0  
 
                 loss = self.criterion(W, Y)
                 loss.backward()
@@ -161,7 +171,18 @@ class SpectralTrainer:
                     if self.siamese_net is not None:
                         X = self.siamese_net.forward_once(X)
 
-                W = self._get_affinity_matrix(X)
+                # W = self._get_affinity_matrix(X)
+                '''instead of using the provided affinity matrix, calculate it using the following rule:'''
+                W = torch.zeros((X.shape[0], X.shape[0]))
+                for i in range(X.shape[0]):
+                    for j in range(X.shape[0]):
+                        if y[i] == y[j]:
+                            W[i][j] = 1
+                        else:
+                            W[i][j] = 0        
+
+                
+
 
                 loss = self.criterion(W, Y)
                 valid_loss += loss.item()
@@ -189,6 +210,7 @@ class SpectralTrainer:
         W = get_gaussian_kernel(
             Dx, scale, indices, device=self.device, is_local=is_local
         )
+
         return W
 
     def _get_data_loader(self) -> tuple:

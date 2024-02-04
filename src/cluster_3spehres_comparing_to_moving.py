@@ -10,10 +10,10 @@ from spectralnet import SpectralNet
 
 def main():
     x_train, y_train, x_test, y_test = load_data("3_spehres")
-    print(x_train)
-    print(y_train)
-    print(x_test)
-    print(y_test)   
+    # print(x_train)
+    # print(y_train)
+    # print(x_test)
+    # print(y_test)   
     # X = torch.cat([x_train, x_test])
     X = x_train
     if y_train is not None:
@@ -25,9 +25,9 @@ def main():
     spectralnet = SpectralNet(
         n_clusters=3,
         should_use_ae=False,
-        should_use_siamese=True,
+        should_use_siamese=False,
         spectral_batch_size=500,
-        spectral_epochs=100,
+        spectral_epochs=8,
         spectral_is_local_scale=False,
         spectral_n_nbg=8,
         spectral_scale_k=2,
