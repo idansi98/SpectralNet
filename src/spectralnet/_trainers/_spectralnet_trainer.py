@@ -120,7 +120,7 @@ class SpectralTrainer:
                     with torch.no_grad():
                         X_grad = self.siamese_net.forward_once(X_grad)
                 
-                # W = self._get_affinity_matrix(X_grad)
+                #W = self._get_affinity_matrix(X_grad)
                 ''' instead of using the provided affinity matrix, calculate it using the following rule:
                     if the points are within the same cluster means their y value is the same, the affinity matrix should be 1, otherwise 0
                 '''
